@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aves Chilenas</title>
+    <link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+    <nav>
+        <h1>Aves Chilenas</h1>
+        <ul>
+            <li><a href="index.html">Portada</a></li>
+            <li><a href="page-1.html">Aves Playeras</a></li>
+            <li><a href="page-2.html" class="active">Aves Cantoras</a></li>
+            <li><a href="page-3.html">Aves Acuáticas</a></li>
+            <li><a href="page-4.html">Garzas y similares</a></li>
+            <li><a href="page-5.html">Aves Rapaces</a></li>
+            <li><a href="page-6.html">Palomas y Tórtolas</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2 id="titulo">Cargando...</h2>
+        <p>El orden más diverso de aves en Chile y el mundo. Incluye más de la mitad de todas las especies de aves. Se caracterizan por ser aves cantoras, con patas adaptadas para posarse en ramas. Incluye jilgueros, zorzales, golondrinas, tordos, diucas, chercanes y muchas otras aves pequeñas y medianas.</p>
+        <div class="grid" id="grid"></div>
+    </div>
+    <footer>
+        <p>Desarrollado por <a href="#" target="_blank">Nombre Apellido</a> &copy; 2025</p>
+    </footer>
+    <script>
+        const grid = document.getElementById('grid');
+        const titulo = document.getElementById('titulo');
+        
+        async function datos(raw) {
+            try {
+                let consulta = await fetch(raw);
+                let data = await consulta.json();
+                console.log(data);
+                
+                grid.innerHTML = '';
+                let conteo = 1;
+                
+                data.forEach((a) => {
+                    // Filtrar todas las aves que contengan "Passeriformes" en su orden
+                    if(a.info.order.value.includes("Passeriformes")) {                    
+                        grid.innerHTML += `
+                            <div class="grid-item">
+                                <img src="${a.image.url.replace("http://www.buscaves.cl/", "https://buscaves.cl/")}" alt="${a.names.spanish}"/>
+                                <p>${conteo}. <em>${a.names.spanish}</em></p>
+                                <small>${a.names.latin}</small>
+                            </div>
+                        `;
+                        conteo++;
+                    }
+                });
+                
+                titulo.textContent = `${conteo - 1} Especies`;
+                console.log(`Total de Passeriformes encontrados: ${conteo - 1}`);
+                
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
+            }
+        }
+        
+        datos("https://raw.githubusercontent.com/NinjasCL/chileanbirds-dataset/refs/heads/master/data/birds.json");
+    </script>
+</body>
+</html>
